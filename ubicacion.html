@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+
+  <meta charset="UTF-8">
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0">
+
+  <title>Prueba ubicación AMCS</title>
+
+  <style>
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      padding: 20px;
+
+      min-height: 100vh;
+
+      display: flex;
+      justify-content: center;
+      align-items: center;
+
+      font-family: Arial, Helvetica, sans-serif;
+
+      background: #f4f6f8;
+    }
+
+    .contenedor {
+
+      width: 100%;
+      max-width: 430px;
+
+      background: white;
+
+      border-radius: 24px;
+
+      padding: 35px 25px;
+
+      text-align: center;
+
+      box-shadow:
+        0 8px 30px rgba(0,0,0,0.12);
+    }
+
+    .icono {
+      font-size: 60px;
+      margin-bottom: 15px;
+    }
+
+    h1 {
+
+      margin: 0 0 15px;
+
+      font-size: 28px;
+
+      color: #222;
+    }
+
+    .texto {
+
+      font-size: 18px;
+
+      line-height: 1.45;
+
+      color: #555;
+
+      margin-bottom: 25px;
+    }
+
+    button {
+
+      width: 100%;
+
+      height: 62px;
+
+      border: none;
+
+      border-radius: 15px;
+
+      background: #20aa4b;
+
+      color: white;
+
+      font-size: 21px;
+
+      font-weight: 800;
+
+      cursor: pointer;
+    }
+
+    button:disabled {
+      opacity: 0.6;
+    }
+
+    #resultado {
+
+      margin-top: 25px;
+
+      font-size: 18px;
+
+      line-height: 1.6;
+
+      font-weight: 700;
+    }
+
+    .ok {
+      color: #20aa4b;
+    }
+
+    .error {
+      color: #df3448;
+    }
+
+  </style>
+
+</head>
+
+
+<body>
+
+
+  <div class="contenedor">
+
+    <div class="icono">
+      📍
+    </div>
+
+
+    <h1>
+      Prueba de ubicación
+    </h1>
+
+
+    <div class="texto">
+
+      Vamos a comprobar si este dispositivo
+      puede proporcionar su ubicación.
+
+    </div>
+
+
+    <button
+      id="boton"
+      onclick="obtenerUbicacion()">
+
+      OBTENER MI UBICACIÓN
+
+    </button>
+
+
+    <div
+      id="resultado">
+    </div>
+
+  </div>
+
+
+<script>
+
+
+function obtenerUbicacion() {
+
+
+  const boton =
+    document.getElementById("boton");
+
+
+  const resultado =
+    document.getElementById("resultado");
+
+
+  boton.disabled = true;
+
+
+  boton.textContent =
+    "OBTENIENDO UBICACIÓN...";
+
+
+  resultado.className = "";
+
+
+  resultado.innerHTML =
+    "📍 Esperando ubicación del dispositivo...";
+
+
+  if (!navigator.geolocation) {
+
+
+    resultado.className =
+      "error";
+
+
+    resultado.innerHTML =
+
+      "❌ Este navegador no permite " +
+      "obtener la ubicación.";
+
+
+    boton.disabled = false;
+
+
+    boton.textContent =
+      "INTENTAR DE NUEVO";
+
+
+    return;
+
+  }
+
+
+  navigator.geolocation.getCurrentPosition(
+
+
+    function(position) {
+
+
+      const latitud =
+        position.coords.latitude;
+
+
+      const longitud =
+        position.coords.longitude;
+
+
+      const precision =
+        position.coords.accuracy;
+
+
+      resultado.className =
+        "ok";
+
+
+      resultado.innerHTML =
+
+        "✅ UBICACIÓN OBTENIDA" +
+
+        "<br><br>" +
+
+        "Latitud:<br>" +
+
+        "<strong>" +
+        latitud.toFixed(7) +
+        "</strong>" +
+
+        "<br><br>" +
+
+        "Longitud:<br>" +
+
+        "<strong>" +
+        longitud.toFixed(7) +
+        "</strong>" +
+
+        "<br><br>" +
+
+        "Precisión:<br>" +
+
+        "<strong>" +
+        Math.round(precision) +
+        " metros</strong>";
+
+
+      boton.disabled = false;
+
+
+      boton.textContent =
+        "VOLVER A COMPROBAR";
+
+    },
+
+
+    function(error) {
+
+
+      let mensaje = "";
+
+
+      switch (error.code) {
+
+
+        case error.PERMISSION_DENIED:
+
+          mensaje =
+            "Safari ha rechazado el acceso " +
+            "a la ubicación.";
+
+          break;
+
+
+        case error.POSITION_UNAVAILABLE:
+
+          mensaje =
+            "El dispositivo no ha podido " +
+            "determinar tu ubicación.";
+
+          break;
+
+
+        case error.TIMEOUT:
+
+          mensaje =
+            "Se ha agotado el tiempo esperando " +
+            "la ubicación.";
+
+          break;
+
+
+        default:
+
+          mensaje =
+            "Se ha producido un error " +
+            "desconocido.";
+
+      }
+
+
+      resultado.className =
+        "error";
+
+
+      resultado.innerHTML =
+
+        "❌ " +
+        mensaje +
+
+        "<br><br>" +
+
+        "<small>" +
+
+        "Código: " +
+        error.code +
+
+        "<br>" +
+
+        (error.message || "") +
+
+        "</small>";
+
+
+      boton.disabled = false;
+
+
+      boton.textContent =
+        "INTENTAR DE NUEVO";
+
+    },
+
+
+    {
+
+      enableHighAccuracy: true,
+
+      timeout: 20000,
+
+      maximumAge: 0
+
+    }
+
+  );
+
+}
+
+
+</script>
+
+
+</body>
+
+</html>
